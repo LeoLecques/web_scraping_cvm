@@ -8,7 +8,7 @@ csv_file = "https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/DADOS/cad_cia_aberta.c
 df = pd.read_csv(csv_file, delimiter=';', encoding='latin1')
 
 # Conecta ou cria um banco de dados SQLite e salva os dados
-db_name = 'companhias_abertas.db'
+db_name = 'web_scraping_cvm.db'
 conn = sqlite3.connect(db_name)
 df.to_sql('companhias_abertas', conn, if_exists='replace', index=False)
 conn.close()
