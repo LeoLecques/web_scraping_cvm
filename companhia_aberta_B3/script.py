@@ -1,7 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
-import zipfile
-import io
 import pandas as pd
 import sqlite3
 
