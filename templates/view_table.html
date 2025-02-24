@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dados da Tabela: {{ table_name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <style>
+        header {
+            background-color: #000; /* Cor de fundo */
+            color: #fff; /* Cor do texto */
+            padding: 15px; /* Preenchimento ao redor do texto */
+            font-size: 20px; /* Tamanho da fonte */
+            text-align: center; /* Alinhamento do texto */
+        }
+        .sidebar {
+            height: 100vh;
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+        .btn-first {
+            margin-top: 20px;
+        }
+        thead th {
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .main-content {
+            overflow-y: auto;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Régia Capital </h1>
+        <p>{{ table_name }}</p>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-2 bg-light sidebar">
+                {% for name, formatted_name in table_names.items() %}
+                <button class="btn btn-dark w-100 mb-2 {{ 'btn-first' if loop.first else '' }}" onclick="window.location.href='/table/{{ name }}'">{{ formatted_name }}</button>
+                {% endfor %}
+            </aside>
+            <main class="col-10 main-content">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                {% for col in column_names %}
+                                <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                {% for col in column_names %}
+                                <td>{{ row[col] }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page > 1 %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=1) }}">1</a></li>
+                        {% endif %}
+                        {% if page > 2 %}
+                        <li class="page-item"><span class="page-link">...</span></li>
+                        {% endif %}
+                        {% for p in range(page, page + 3) if p <= total_pages %}
+                        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=p) }}">{{ p }}</a></li>
+                        {% endfor %}
+                        {% if page < total_pages - 3 %}
+                        <li class="page-item"><span class="page-link">...</span></li>
+                        {% endif %}
+                        {% if page < total_pages %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages) }}">{{ total_pages }}</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </main>
+        </div>
+    </div>
+    <footer class="text-center py-2 bg-dark text-white mt-auto">
+        <p>Leonardo Lecques - <a href="https://www.linkedin.com/in/leonardo-lecques-b7397419b/" target="_blank" class="text-white">LinkedIn</a></p>
+    </footer>
+</body>
+</html>
+
