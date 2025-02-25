@@ -35,6 +35,6 @@ for ano in range(2023, 2026):
     for name, df in dataframes.items():
         # Define um nome de tabela baseado no nome do arquivo, removendo o '.csv' e adicionando o ano
         table_name = name.replace('.csv', '')  # Remove a extensão .csv
-        df.to_sql(table_name, conn, if_exists='replace', index=False)
+        df.to_sql(table_name, conn, if_exists='replace', index=True, index_label="id")
 
     conn.close()

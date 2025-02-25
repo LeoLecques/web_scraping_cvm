@@ -10,5 +10,5 @@ df = pd.read_csv(csv_file, delimiter=';', encoding='latin1')
 # Conecta ou cria um banco de dados SQLite e salva os dados
 db_name = 'web_scraping_cvm.db'
 conn = sqlite3.connect(db_name)
-df.to_sql('companhias_abertas', conn, if_exists='replace', index=False)
+df.to_sql('companhias_abertas', conn, if_exists='replace', index=True,index_label="id")
 conn.close()

@@ -34,7 +34,7 @@
 </head>
 <body>
     <header>
-        <h1>Régia Capital </h1>
+        <h1>Régia Capital</h1>
         <p>{{ table_name }}</p>
     </header>
     <div class="container-fluid">
@@ -52,38 +52,65 @@
                                 {% for col in column_names %}
                                 <th>{{ col }}</th>
                                 {% endfor %}
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for row in data %}
                             <tr>
-                                {% for col in column_names %}
-                                <td>{{ row[col] }}</td>
-                                {% endfor %}
+                                <form action="{{ url_for('update_row', id=row['id'], table_name=table_name) }}" method="post">
+                                    {% for col in column_names %}
+                                    <td><input type="text" name="{{ col }}" value="{{ row[col] }}" style="border:none; background-color:transparent;"></td>
+                                    {% endfor %}
+                                    <td>
+                                        <button type="submit" class="btn btn-primary btn-sm">Atualizar</button>
+                                    </form>
+                                    <form action="{{ url_for('delete_row', id=row['id'], table_name=table_name) }}" method="post" onsubmit="return confirm('Tem certeza que deseja deletar esta linha?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                                    </form>
+                                    </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <!-- Pagination -->
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        {% if page > 1 %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=1) }}">1</a></li>
-                        {% endif %}
-                        {% if page > 2 %}
-                        <li class="page-item"><span class="page-link">...</span></li>
-                        {% endif %}
-                        {% for p in range(page, page + 3) if p <= total_pages %}
-                        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=p) }}">{{ p }}</a></li>
-                        {% endfor %}
-                        {% if page < total_pages - 3 %}
-                        <li class="page-item"><span class="page-link">...</span></li>
-                        {% endif %}
-                        {% if page < total_pages %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages) }}">{{ total_pages }}</a></li>
-                        {% endif %}
-                    </ul>
+                <nav aria-label="Page navigation">
+                  <ul class="pagination">
+                    {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=1) }}">1</a></li>
+                    {% endif %}
+                    
+                    {% if page == 1 %}
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    {% endif %}
+                    
+                    {% if page < total_pages %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=2) }}">2</a></li>
+                    {% endif %}
+                    
+                    {% if page > 3 %}
+                    <li class="page-item"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    {% if page > 2 and page < total_pages - 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page-1) }}">{{ page - 1 }}</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page+1) }}">{{ page + 1 }}</a></li>
+                    {% endif %}
+
+                    {% if page < total_pages - 2 %}
+                    <li class="page-item"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    {% if total_pages > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages-1) }}">{{ total_pages-1 }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages) }}">{{ total_pages }}</a></li>
+                    {% endif %}
+                    
+                    {% if page < total_pages %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page+1) }}">Próximo</a></li>
+                    {% endif %}
+                  </ul>
                 </nav>
             </main>
         </div>

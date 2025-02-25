@@ -1,10 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = 'senha_teste' 
 
 def get_db_connection():
-    conn = sqlite3.connect('web_scraping_cvm.db') 
+    conn = sqlite3.connect('web_scraping_cvm.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -52,5 +53,29 @@ def view_table(table_name, page=1):
     conn.close()
     return render_template('view_table.html', data=data, column_names=column_names, page=page, total_pages=total_pages, table_names=formatted_names, table_name=table_name)
 
+@app.route('/update/<table_name>/<int:id>', methods=['POST'])
+def update_row(table_name, id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    data = request.form
+    set_clause = ', '.join([f"{key} = ?" for key in data.keys()])
+    values = list(data.values()) + [id]
+    cursor.execute(f"UPDATE `{table_name}` SET {set_clause} WHERE id = ?", values)
+    conn.commit()
+    conn.close()
+    flash('Registro atualizado com sucesso!', 'success')
+    return redirect(url_for('view_table', table_name=table_name))
+
+@app.route('/delete/<table_name>/<int:id>', methods=['POST'])
+def delete_row(table_name, id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM `{table_name}` WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    flash('Registro deletado com sucesso!', 'success')
+    return redirect(url_for('view_table', table_name=table_name))
+
 if __name__ == '__main__':
     app.run(debug=True)
+
