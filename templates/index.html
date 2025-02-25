@@ -42,6 +42,7 @@
                 {% for name, formatted_name in table_names.items() %}
                     <button class="btn btn-dark w-100 mb-2 {{ 'btn-first' if loop.first else '' }}" onclick="window.location.href='/table/{{ name }}'">{{ formatted_name }}</button>
                 {% endfor %}
+                <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='/dashboards'">Dashboards</button>
             </aside>
             <main class="col-10 main-content">
                 <p>Selecione uma tabela ao lado para visualizar os dados.</p>

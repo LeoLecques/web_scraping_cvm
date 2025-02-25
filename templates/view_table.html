@@ -43,6 +43,7 @@
                 {% for name, formatted_name in table_names.items() %}
                 <button class="btn btn-dark w-100 mb-2 {{ 'btn-first' if loop.first else '' }}" onclick="window.location.href='/table/{{ name }}'">{{ formatted_name }}</button>
                 {% endfor %}
+                <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='/dashboards'">Dashboards</button>
             </aside>
             <main class="col-10 main-content">
                 <div class="table-responsive">
@@ -77,36 +78,11 @@
                 <nav aria-label="Page navigation">
                   <ul class="pagination">
                     {% if page > 1 %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=1) }}">1</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page-1) }}">Anterior</a></li>
                     {% endif %}
-                    
-                    {% if page == 1 %}
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    {% endif %}
-                    
-                    {% if page < total_pages %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=2) }}">2</a></li>
-                    {% endif %}
-                    
-                    {% if page > 3 %}
-                    <li class="page-item"><span class="page-link">...</span></li>
-                    {% endif %}
-
-                    {% if page > 2 and page < total_pages - 1 %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page-1) }}">{{ page - 1 }}</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page+1) }}">{{ page + 1 }}</a></li>
-                    {% endif %}
-
-                    {% if page < total_pages - 2 %}
-                    <li class="page-item"><span class="page-link">...</span></li>
-                    {% endif %}
-
-                    {% if total_pages > 1 %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages-1) }}">{{ total_pages-1 }}</a></li>
-                    <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=total_pages) }}">{{ total_pages }}</a></li>
-                    {% endif %}
-                    
+                    {% for i in range(1, total_pages + 1) %}
+                    <li class="page-item {{ 'active' if i == page else '' }}"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=i) }}">{{ i }}</a></li>
+                    {% endfor %}
                     {% if page < total_pages %}
                     <li class="page-item"><a class="page-link" href="{{ url_for('view_table', table_name=table_name, page=page+1) }}">Próximo</a></li>
                     {% endif %}
@@ -116,8 +92,3 @@
         </div>
     </div>
     <footer class="text-center py-2 bg-dark text-white mt-auto">
-        <p>Leonardo Lecques - <a href="https://www.linkedin.com/in/leonardo-lecques-b7397419b/" target="_blank" class="text-white">LinkedIn</a></p>
-    </footer>
-</body>
-</html>
-

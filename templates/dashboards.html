@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboards - Régia Capital</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <style>
+        header {
+            background-color: #000; /* Cor de fundo */
+            color: #fff; /* Cor do texto */
+            padding: 15px; /* Preenchimento ao redor do texto */
+            font-size: 20px; /* Tamanho da fonte */
+            text-align: center; /* Alinhamento do texto */
+        }
+        .sidebar {
+            height: 100vh;
+            overflow-y: auto; /* Barra de rolagem para a barra lateral */
+            padding-top: 20px; /* Espaçamento do topo */
+        }
+        .main-content {
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .btn-first {
+            margin-top: 20px; /* Margem apenas para o primeiro botão */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Régia Capital - Dashboards</h1>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-2 bg-light sidebar">
+                {% for name, formatted_name in table_names.items() %}
+                    <button class="btn btn-dark w-100 mb-2 {{ 'btn-first' if loop.first else '' }}" onclick="window.location.href='/table/{{ name }}'">{{ formatted_name }}</button>
+                {% endfor %}
+                <button class="btn btn-dark w-100 mb-2" onclick="window.location.href='/dashboards'">Dashboards</button>
+                <form id="dashboardForm">
+                    <select class="form-select mb-2" id="yearSelect" name="year">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                    </select>
+                    <button type="submit" class="btn btn-warning w-100 mb-2">Atualizar Dashboard</button>
+                </form>
+            </aside>
+            <main class="col-10 main-content">
+                <h2>Gráficos do ano <span id="selectedYear">{{ year }}</span></h2>
+                <div id="raceChart"></div>
+                <div id="genderChart"></div>
+                <div id="ageChart"></div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function updateCharts(year) {
+            console.log("Solicitando dados para o ano:", year);  // DEBUG
+
+            $.getJSON(`/get_dashboard_data?year=${year}`)
+                .done(function(data) {
+                    console.log("Dados recebidos:", data);  // DEBUG
+
+                    $("#selectedYear").text(year);
+                    Plotly.newPlot('raceChart', JSON.parse(data.race));
+                    Plotly.newPlot('genderChart', JSON.parse(data.gender));
+                    Plotly.newPlot('ageChart', JSON.parse(data.age));
+                })
+                .fail(function(jqxhr, textStatus, error) {
+                    console.error("Erro ao carregar os gráficos:", textStatus, error);
+                });
+        }
+
+        $(document).ready(function() {
+            $("#dashboardForm").submit(function(event) {
+                event.preventDefault(); // Evita o reload da página
+                var selectedYear = $("#yearSelect").val();
+                updateCharts(selectedYear);
+            });
+
+            // Carrega os gráficos iniciais
+            updateCharts($("#yearSelect").val());
+        });
+    </script>
+
+    <footer class="text-center py-2 bg-dark text-white mt-auto">
+        <p>Leonardo Lecques - <a href="https://www.linkedin.com/in/leonardo-lecques-b7397419b/" target="_blank" class="text-white">LinkedIn</a></p>
+    </footer>
+</body>
+</html>
